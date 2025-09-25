@@ -18,10 +18,14 @@ func NormalizeKeys(keys map[string]string, rootName string, sep string) map[stri
 
 		finalKey = append(finalKey, rootName)
 		finalKey = append(finalKey, "providers")
-		cebabKey := strings.ToLower(k)
+		lowerKey := strings.ToLower(k)
+
+		if !strings.HasPrefix(lowerKey, "providers"+sep) {
+			continue
+		}
 
 		for _, known := range knownKeys {
-			if strings.HasSuffix(cebabKey, strings.ReplaceAll(known, "-", sep)) {
+			if strings.HasSuffix(lowerKey, strings.ReplaceAll(known, "-", sep)) {
 				suffix = known
 				break
 			}
@@ -31,7 +35,11 @@ func NormalizeKeys(keys map[string]string, rootName string, sep string) map[stri
 			continue
 		}
 
-		clientNameParts := strings.Split(strings.TrimPrefix(strings.TrimSuffix(cebabKey, sep+strings.ReplaceAll(suffix, "-", sep)), "providers"+sep), sep)
+		if strings.TrimSpace(strings.TrimSuffix(strings.TrimPrefix(lowerKey, "providers"+sep), strings.ReplaceAll(suffix, "-", sep))) == "" {
+			continue
+		}
+
+		clientNameParts := strings.Split(strings.TrimPrefix(strings.TrimSuffix(lowerKey, sep+strings.ReplaceAll(suffix, "-", sep)), "providers"+sep), sep)
 
 		for i, p := range clientNameParts {
 			if i == 0 {
@@ -46,9 +54,9 @@ func NormalizeKeys(keys map[string]string, rootName string, sep string) map[stri
 
 		finalKey = append(finalKey, camelClientName)
 
-		filedParts := strings.Split(suffix, "-")
+		fieldParts := strings.Split(suffix, "-")
 
-		for i, p := range filedParts {
+		for i, p := range fieldParts {
 			if i == 0 {
 				camelField += p
 				continue

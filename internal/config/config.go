@@ -3,8 +3,8 @@ package config
 // Version information, set at build time
 
 var Version = "development"
-var CommitHash = "n/a"
-var BuildTimestamp = "n/a"
+var CommitHash = "development"
+var BuildTimestamp = "0000-00-00T00:00:00Z"
 
 // Cookie name templates
 
@@ -39,6 +39,8 @@ type Config struct {
 	ResourcesDir          string `mapstructure:"resources-dir"`
 	DatabasePath          string `mapstructure:"database-path" validate:"required"`
 	TrustedProxies        string `mapstructure:"trusted-proxies"`
+	DisableAnalytics      bool   `mapstructure:"disable-analytics"`
+	DisableResources      bool   `mapstructure:"disable-resources"`
 }
 
 // OAuth/OIDC config
@@ -61,6 +63,11 @@ type OAuthServiceConfig struct {
 	UserinfoURL        string   `key:"user-info-url"`
 	InsecureSkipVerify bool     `key:"insecure-skip-verify"`
 	Name               string   `key:"name"`
+}
+
+var OverrideProviders = map[string]string{
+	"google": "Google",
+	"github": "GitHub",
 }
 
 // User/session related stuff
@@ -169,3 +176,7 @@ type AppPath struct {
 type Providers struct {
 	Providers map[string]OAuthServiceConfig
 }
+
+// API server
+
+var ApiServer = "https://api.tinyauth.app"
